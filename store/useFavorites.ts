@@ -9,20 +9,26 @@ interface FavoritesState {
   isFavorite: (id: string) => boolean;
 }
 
-export const useFavoritesStore = create<FavoritesState>((set, get) => ({
-  tenants: [],
+export const useFavoritesStore = create(
+  (set, get): FavoritesState => ({
+    tenants: [],
 
-  toggleTenant: (tenant) =>
-    set((state) => {
-      const exists = state.tenants.find((t) => t.id === tenant.id);
-      return {
-        tenants: exists
-          ? state.tenants.filter((t) => t.id !== tenant.id)
-          : [...state.tenants, tenant],
-      };
-    }),
+    toggleTenant: (tenant) => {
+      set((state) => {
+        const exists = state.tenants.some(
+          (t) => t.id === tenant.id
+        );
 
-  isFavorite: (id) => {
-    return get().tenants.some((t) => t.id === id);
-  },
-}));
+        return {
+          tenants: exists
+            ? state.tenants.filter((t) => t.id !== tenant.id)
+            : [...state.tenants, tenant],
+        };
+      });
+    },
+
+    isFavorite: (id) => {
+      return get().tenants.some((t) => t.id === id);
+    },
+  })
+);
